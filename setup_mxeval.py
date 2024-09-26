@@ -11,11 +11,13 @@ def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
     cur_dir = get_cur_dir()
     mxeval_dir = os.path.join(cur_dir, "mxeval")
 
+    # Check dir for existance
     if os.path.isdir(mxeval_dir):
         command = input("Directory does exist. Do you want to update it?(Y/n):")
 
         command = command.lower()
 
+        # Update dir if asked
         if command == '' or command == 'y':
             try:
                 shutil.rmtree(mxeval_dir)
