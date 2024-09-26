@@ -1,6 +1,7 @@
 import os
 import sys
 
+# Add mxeval_dir to sys.path for usages
 def setup_mxeval(mxeval_parent_dir):
     # Get the path to the mxeval directory
     mxeval_dir = os.path.join(mxeval_parent_dir, 'mxeval')
