@@ -1,0 +1,5 @@
+import os
+
+# Return directory of the project
+def get_cur_dir():
+    return os.path.dirname(os.path.realpath(__file__))
