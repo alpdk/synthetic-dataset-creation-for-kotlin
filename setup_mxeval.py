@@ -1,6 +1,12 @@
 import os
 import sys
 
+from git import Repo
+
+# Install mxeval by link
+def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
+    Repo.clone_from(link, "mxeval")
+
 # Add mxeval_dir to sys.path for usages
 def setup_mxeval(mxeval_parent_dir):
     # Get the path to the mxeval directory
@@ -17,3 +23,5 @@ def setup_mxeval(mxeval_parent_dir):
     # Print all system path for packages
     # sys.path.remove(mxeval_dir)
     # print(sys.path, sep='\n')
+
+# install_mxeval()
