@@ -22,12 +22,12 @@ def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
             try:
                 shutil.rmtree(mxeval_dir)
                 
-                print("Directory removed successfully. Start cloning...")
+                print("Directory removed successfully. Start cloning...", end='\n')
                 Repo.clone_from(link, mxeval_dir)
             except OSError as o:
-                print(f"Error, {o.strerror}: {mxeval_dir}")
+                print(f"Error, {o.strerror}: {mxeval_dir}", end='\n')
     else:    
-        println("Directory does not exist. Start cloning...")
+        print("Directory does not exist. Start cloning...", end='\n')
         Repo.clone_from(link, mxeval_dir)
 
 # Add mxeval_dir to sys.path for usages
