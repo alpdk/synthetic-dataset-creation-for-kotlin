@@ -28,7 +28,7 @@ class StoppingCriteriaSub(StoppingCriteria):
         return bool(re.search(self.stops, decoded_last_three_tokens))
 
 
-def generate(problem):
+def generate(problem, model, tokenizer):
     criterion = StoppingCriteriaSub(stops="\n}\n", tokenizer=tokenizer)
     stopping_criteria = StoppingCriteriaList([criterion])
 
@@ -73,7 +73,7 @@ def generate_base_model_answers(model_name="JetBrains/CodeLlama-7B-Kexer", datas
     output = []
     for key in tqdm(list(problem_dict.keys()), leave=False):
         problem = problem_dict[key]["prompt"]
-        answer = generate(problem)
+        answer = generate(problem, model, tokenizer)
         answer = clean_asnwer(answer)
         output.append({"task_id": key, "completion": answer, "language": "kotlin"})
 
