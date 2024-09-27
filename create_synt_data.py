@@ -1,4 +1,15 @@
+import torch
+
 from datasets import load_dataset
+from generate_base_model_answers import StoppingCriteriaSub, clean_answer
+
+from transformers import (
+    AutoTokenizer,
+    AutoModelForCausalLM,
+    StoppingCriteria,
+    StoppingCriteriaList,
+)
+
 
 def split_problem_data(problem_str):
     # Find the position of the opening and closing triple quotes
@@ -11,29 +22,60 @@ def split_problem_data(problem_str):
         code = problem_str[:start_index].strip()
 
         # Extract the comment part (between the triple quotes)
-        comment = problem_str[start_index + 3:end_index].strip()
+        comment = "/***" + problem_str[start_index + 3:end_index].strip() + "***/\n"
 
         return code, comment
     else:
         raise ValueError("Comment section not found.")
 
 
-def create_synt_data(dataset_name = "jinaai/code_exercises"):
-    # Load the dataset
-    dataset = load_dataset("jinaai/code_exercises")
+def generate_kotlin_prompt(model, tokenizer, code, prompt, stop_crit):
+    criterion = StoppingCriteriaSub(stops=stop_crit, tokenizer=tokenizer)
+    stopping_criteria = StoppingCriteriaList([criterion])
+
+    problem = prompt + code
+
+    problem = tokenizer.encode(problem, return_tensors="pt").to('cuda')
+
+    sample = model.generate(
+        problem,
+        max_new_tokens=256,
+        min_new_tokens=128,
+        pad_token_id=tokenizer.eos_token_id,
+        do_sample=False,
+        num_beams=1,
+        stopping_criteria=stopping_criteria,
+    )
+
+    answer = tokenizer.decode(sample[0], skip_special_tokens=True)
+
+    code = clean_answer(answer, 0)
+    substring = " {"
+
+    func_head, func_body = code.split(substring, 1)
+
+    func_head = func_head + substring
+
+    return func_head, func_body
+
+
+def create_synt_data(model_name='ibm-granite/granite-3b-code-base-2k', dataset_name="jinaai/code_exercises"):
+    dataset = load_dataset(dataset_name)['train']
+
+    model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16).to('cuda')
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     # Print the dataset structure
-    print(dataset)
+    # print(dataset)
 
-    # Accessing the training set
-    train_dataset = dataset['train']
+    code, comment = split_problem_data(dataset[100]["problem"])
 
-    # Display the first example in the training set
-    # print(train_dataset[100]["problem"])
+    func_head, func_body = generate_kotlin_prompt(model, tokenizer, code,
+                                                  "Translate code from python to kotlin, also head of the function should contain {",
+                                                  "\n}\n")
 
-    code, comment = split_problem_data(train_dataset[100]["problem"])
+    print(func_head, end='\n\n')
+    print(func_body, end='\n\n')
 
-    print("Code: ", code, end='\n')
-    print("Сomment: ", comment, end='\n')
 
 create_synt_data()
