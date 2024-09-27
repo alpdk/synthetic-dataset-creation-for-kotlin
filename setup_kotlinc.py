@@ -13,17 +13,17 @@ def install_arc_and_unpack(link, cur_dir):
 
 # Install kotlinc by link with checks
 def install_kotlinc(link, cur_dir, kotlinc_dir):
-    # Checking kotlinc existance
+    # Checking kotlinc existence
     if os.path.exists(kotlinc_dir):
-        command = input("Kotlinc does exist. Do you want to update it?(Y/n):")
+        command = input("Kotlinc does exist. Do you want to update it?(y/N):")
 
         command = command.lower()
 
-        if command == '' or command == 'y':
+        if command == 'y':
             try:
                 shutil.rmtree(kotlinc_dir)
 
-                print("Kotlinc uninstalled successfuly. Start installing...", end='\n')
+                print("Kotlinc uninstalled successfully. Start installing...", end='\n')
                 install_arc_and_unpack(link, cur_dir)
             except OSError as o:
                 print(f"Error, {o.strerror}: /usr/local/kotlinc", end='\n')
