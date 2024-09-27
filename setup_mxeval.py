@@ -42,9 +42,3 @@ def setup_mxeval(mxeval_parent_dir):
             sys.path.remove(mxeval_dir)
 
         sys.path.insert(0, mxeval_dir)
-
-    # Print all system path for packages
-    # sys.path.remove(mxeval_dir)
-    # print(sys.path, sep='\n')
-
-install_mxeval()
