@@ -1,5 +1,3 @@
-import os
-import sys
 import json
 
 from datasets import load_dataset
@@ -33,5 +31,3 @@ def check_kotlin_code(file_to_check = 'answers'):
             correct += sample_res['passed']
 
         print(f'Pass rate: {correct/total}')
-
-check_kotlin_code()
