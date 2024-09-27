@@ -5,6 +5,7 @@ import shutil
 from git import Repo
 from get_cur_dir import get_cur_dir
 
+
 # Install mxeval by link
 def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
     cur_dir = get_cur_dir()
@@ -16,7 +17,6 @@ def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
 
         command = command.lower()
 
-        # Update dir if asked
         if command == 'y':
             try:
                 shutil.rmtree(mxeval_dir)
