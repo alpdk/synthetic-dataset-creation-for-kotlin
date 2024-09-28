@@ -60,13 +60,12 @@ def generate_kotlin_prompt(model, tokenizer, code, prompt, stop_crit):
 
 
 def create_synt_data(model_name='ibm-granite/granite-3b-code-base-2k', dataset_name="jinaai/code_exercises"):
+    new_dataset = {"train": []}
+
     dataset = load_dataset(dataset_name)['train']
 
     model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16).to('cuda')
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-    # Print the dataset structure
-    # print(dataset)
 
     code, comment = split_problem_data(dataset[0]["problem"])
 
@@ -81,8 +80,16 @@ def create_synt_data(model_name='ibm-granite/granite-3b-code-base-2k', dataset_n
                                                   ```python""",
                                                   "\n}\n")
 
-    print(func_head, end='\n\n')
-    print(func_body, end='\n\n')
+    if not new_dataset["train"]:
+        new_dataset["train"].append([])
+
+    new_dataset["train"][-1] = {}
+
+    new_dataset["train"][-1]["prompt"] = comment + "\n\n" + func_head
+    new_dataset["train"][-1]["solution"] = func_body
+
+    print(new_dataset["train"][-1]["prompt"], end='\n\n')
+    print(new_dataset["train"][-1]["solution"], end='\n\n')
 
 
 create_synt_data()
