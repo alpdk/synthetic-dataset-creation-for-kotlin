@@ -43,7 +43,7 @@ def generate_kotlin_prompt(model, tokenizer, code, prompt, stop_crit):
         min_new_tokens=128,
         pad_token_id=tokenizer.eos_token_id,
         do_sample=False,
-        num_beams=1,
+        num_beams=5,
         stopping_criteria=stopping_criteria,
     )
 
@@ -68,12 +68,12 @@ def create_synt_data(model_name='ibm-granite/granite-3b-code-base-2k', dataset_n
     # Print the dataset structure
     # print(dataset)
 
-    code, comment = split_problem_data(dataset[100]["problem"])
+    code, comment = split_problem_data(dataset[0]["problem"])
 
-    sol_code = dataset[100]["solution"]
+    sol_code = dataset[0]["solution"]
 
-    func_head, func_body = generate_kotlin_prompt(model, tokenizer, code + '\n' + sol_code,
-                                                  """Translate the following Python function to Kotlin. 
+    func_head, func_body = generate_kotlin_prompt(model, tokenizer, comment + '\n' + code + '\n' + sol_code,
+                                                  """Generate and translate the following Python function to Kotlin. 
                                                   Ensure the Kotlin function has proper formatting with correct indentation. 
                                                   The Kotlin function definition should include a `{` immediately after the parameter list, and the rest of the code should be indented as per Kotlin's syntax rules.
                                                   Python code:
