@@ -70,8 +70,15 @@ def create_synt_data(model_name='ibm-granite/granite-3b-code-base-2k', dataset_n
 
     code, comment = split_problem_data(dataset[100]["problem"])
 
-    func_head, func_body = generate_kotlin_prompt(model, tokenizer, code,
-                                                  "Translate code from python to kotlin, also head of the function should contain {",
+    sol_code = dataset[100]["solution"]
+
+    func_head, func_body = generate_kotlin_prompt(model, tokenizer, code + '\n' + sol_code,
+                                                  """Translate the following Python function to Kotlin. 
+                                                  Ensure the Kotlin function has proper formatting with correct indentation. 
+                                                  The Kotlin function definition should include a `{` immediately after the parameter list, and the rest of the code should be indented as per Kotlin's syntax rules.
+                                                  Python code:
+
+                                                  ```python""",
                                                   "\n}\n")
 
     print(func_head, end='\n\n')
