@@ -1,5 +1,6 @@
 import torch
 
+from tqdm import tqdm
 from datasets import load_dataset
 from generate_base_model_answers import StoppingCriteriaSub, clean_answer
 
@@ -59,7 +60,7 @@ def generate_kotlin_prompt(model, tokenizer, code, prompt, stop_crit):
     return func_head, func_body
 
 
-def create_synt_data(model_name='ibm-granite/granite-3b-code-base-2k', dataset_name="jinaai/code_exercises"):
+def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-code-base-2k', dataset_name="jinaai/code_exercises"):
     new_dataset = {"train": []}
 
     dataset = load_dataset(dataset_name)['train']
@@ -67,29 +68,30 @@ def create_synt_data(model_name='ibm-granite/granite-3b-code-base-2k', dataset_n
     model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16).to('cuda')
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    code, comment = split_problem_data(dataset[0]["problem"])
+    for i in tqdm(range(translate_count)):
+        code, comment = split_problem_data(dataset[i]["problem"])
 
-    sol_code = dataset[0]["solution"]
+        sol_code = dataset[i]["solution"]
 
-    func_head, func_body = generate_kotlin_prompt(model, tokenizer, comment + '\n' + code + '\n' + sol_code,
-                                                  """Generate and translate the following Python function to Kotlin. 
-                                                  Ensure the Kotlin function has proper formatting with correct indentation. 
-                                                  The Kotlin function definition should include a `{` immediately after the parameter list, and the rest of the code should be indented as per Kotlin's syntax rules.
-                                                  Python code:
+        func_head, func_body = generate_kotlin_prompt(model, tokenizer, comment + '\n' + code + '\n' + sol_code,
+                                                      """Generate and translate the following Python function to Kotlin. 
+                                                      Ensure the Kotlin function has proper formatting with correct indentation. 
+                                                      The Kotlin function definition should include a `{` immediately after the parameter list, and the rest of the code should be indented as per Kotlin's syntax rules.
+                                                      Python code:
 
-                                                  ```python""",
-                                                  "\n}\n")
+                                                      ```python""",
+                                                      "\n}\n")
 
-    if not new_dataset["train"]:
-        new_dataset["train"].append([])
+        if not new_dataset["train"]:
+            new_dataset["train"].append([])
 
-    new_dataset["train"][-1] = {}
+        new_dataset["train"][i] = {}
 
-    new_dataset["train"][-1]["prompt"] = comment + "\n\n" + func_head
-    new_dataset["train"][-1]["solution"] = func_body
+        new_dataset["train"][i]["prompt"] = comment + "\n\n" + func_head
+        new_dataset["train"][i]["solution"] = func_body
 
-    print(new_dataset["train"][-1]["prompt"], end='\n\n')
-    print(new_dataset["train"][-1]["solution"], end='\n\n')
+        # print(new_dataset["train"][-1]["prompt"], end='\n\n')
+        # print(new_dataset["train"][-1]["solution"], end='\n\n')
 
 
 create_synt_data()
