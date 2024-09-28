@@ -82,9 +82,7 @@ def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-c
                                                       ```python""",
                                                       "\n}\n")
 
-        if not new_dataset["train"]:
-            new_dataset["train"].append([])
-
+        new_dataset["train"].append([])
         new_dataset["train"][i] = {}
 
         new_dataset["train"][i]["prompt"] = comment + "\n\n" + func_head
