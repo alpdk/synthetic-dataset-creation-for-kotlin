@@ -1,3 +1,4 @@
+import json
 import torch
 
 from tqdm import tqdm
@@ -88,6 +89,8 @@ def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-c
         new_dataset["train"][i]["prompt"] = comment + "\n\n" + func_head
         new_dataset["train"][i]["solution"] = func_body
 
+    with open("test_dataset.json", "w") as outfile:
+        json.dump(new_dataset, outfile)
         # print(new_dataset["train"][-1]["prompt"], end='\n\n')
         # print(new_dataset["train"][-1]["solution"], end='\n\n')
 
