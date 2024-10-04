@@ -50,12 +50,14 @@ def generate(problem, model, tokenizer):
 def clean_answer(code, skip_lines=1):
     # Clean comments
     code_without_line_comments = re.sub(r"//.*", "", code)
+
     code_without_all_comments = re.sub(
         r"/\*.*?\*/", "", code_without_line_comments, flags=re.DOTALL
     )
 
     # Clean signatures
-    lines = code.split("\n")
+    lines = code_without_all_comments.split("\n")
+
     for i, line in enumerate(lines):
         if line.startswith("fun "):
             return "\n".join(lines[i + skip_lines:])
@@ -65,7 +67,7 @@ def clean_answer(code, skip_lines=1):
 
 def generate_base_model_answers(model_name="JetBrains/CodeLlama-7B-Kexer", dataset_name="jetbrains/Kotlin_HumanEval"):
     dataset = load_dataset(dataset_name)['train']
-    # problem_dict = {problem['task_id']: problem for problem in dataset}
+    problem_dict = {problem['task_id']: problem for problem in dataset}
 
     model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16).to('cuda')
     tokenizer = AutoTokenizer.from_pretrained(model_name)
