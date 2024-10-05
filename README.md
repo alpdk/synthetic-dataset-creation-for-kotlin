@@ -58,7 +58,7 @@ You can run this scrypt like:
 2. ```python generate_model_answers.py [model name/local path]```
 3. ```python generate_model_answers.py [model name/local path] [dataset name]```
 
-
+As a result it will give you a pass rate on tests and file `answer` with results for each test.
 
 
 
