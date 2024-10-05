@@ -1,12 +1,7 @@
 import json
 import torch
-
-import re
-import torch
-import jsonlines
 import torch.nn as nn
 
-from tqdm import tqdm
 from datasets import Dataset, load_dataset
 from peft import LoraConfig, get_peft_model
 
@@ -20,46 +15,13 @@ from transformers import (
     DataCollatorForLanguageModeling
 )
 
-
-def finetune_model(check_dataset_name='jinaai/code_exercises',
-                   finetune_dataset_name='test_dataset.json',
-                   model_name='ibm-granite/granite-3b-code-base-2k',
-                   layers_to_unfreeze=None):
-
-    model = AutoModelForCausalLM.from_pretrained('ibm-granite/granite-3b-code-base-2k',
-                                                 torch_dtype=torch.bfloat16)
-    tokenizer = AutoTokenizer.from_pretrained('ibm-granite/granite-3b-code-base-2k')
-
-    for param in model.parameters():
-        param.requires_grad = False
-
-        if param.ndim == 1:
-            param.data = param.data.to(torch.float32)
-
-    model.gradient_checkpointing_enable()
-    model.enable_input_require_grads()
-
-    class CastOutputToFloat(nn.Sequential):
-        def forward(self, x): return super().forward(x).to(torch.float32)
-
-    model.lm_head = CastOutputToFloat(model.lm_head)
-
-    # Setting LoraConfig for phi-1_5
-    config = LoraConfig(
-        r=16,
-        lora_alpha=16,
-        target_modules=["q_proj", "k_proj", "v_proj"],
-        lora_dropout=0.05,
-    )
-
-    model = get_peft_model(model, config)
-    model.print_trainable_parameters()
-
+def get_datasets(tokenizer):
     try:
         with open('test_dataset.json', 'r') as f:
             dataset = json.load(f)
     except FileNotFoundError as e:
         print(f"The file {e} was not found.")
+        return None, None
 
     train_data = dataset['train']
     train_dataset = Dataset.from_list(train_data)
@@ -97,9 +59,50 @@ def finetune_model(check_dataset_name='jinaai/code_exercises',
     tokenized_train_dataset = tokenized_train_dataset.remove_columns(['prompt', 'solution'])
     tokenized_test_dataset = tokenized_test_dataset.remove_columns(['prompt', 'solution'])
 
+    return tokenized_train_dataset, tokenized_test_dataset
+
+def finetune_model(check_dataset_name='jinaai/code_exercises',
+                   finetune_dataset_name='test_dataset.json',
+                   model_name='ibm-granite/granite-3b-code-base-2k',
+                   layers_to_unfreeze=None):
+
+    model = AutoModelForCausalLM.from_pretrained('ibm-granite/granite-3b-code-base-2k',
+                                                 torch_dtype=torch.bfloat16)
+    tokenizer = AutoTokenizer.from_pretrained('ibm-granite/granite-3b-code-base-2k')
+
+    for param in model.parameters():
+        param.requires_grad = False
+
+        if param.ndim == 1:
+            param.data = param.data.to(torch.float32)
+
+    model.gradient_checkpointing_enable()
+    model.enable_input_require_grads()
+
+    class CastOutputToFloat(nn.Sequential):
+        def forward(self, x): return super().forward(x).to(torch.float32)
+
+    model.lm_head = CastOutputToFloat(model.lm_head)
+
+    # Setting LoraConfig for phi-1_5
+    config = LoraConfig(
+        r=16,
+        lora_alpha=16,
+        target_modules=["q_proj", "k_proj", "v_proj"],
+        lora_dropout=0.05,
+    )
+
+    model = get_peft_model(model, config)
+    model.print_trainable_parameters()
+
+    tokenized_train_dataset, tokenized_test_dataset = get_datasets(tokenizer)
+
+    if tokenized_train_dataset is None and tokenized_test_dataset is None:
+        return None
+
     # Define training arguments
     training_args = TrainingArguments(
-        output_dir="./results", \
+        output_dir="./results",
         per_device_train_batch_size=8,  # Default value
         per_device_eval_batch_size=8,  # Default value
         num_train_epochs=1,
