@@ -21,10 +21,10 @@ from transformers import (
 )
 
 
-def finetune_and_check_model(check_dataset_name='jinaai/code_exercises',
-                             finetune_dataset_name='test_dataset.json',
-                             model_name='ibm-granite/granite-3b-code-base-2k',
-                             layers_to_unfreeze=None):
+def finetune_model(check_dataset_name='jinaai/code_exercises',
+                   finetune_dataset_name='test_dataset.json',
+                   model_name='ibm-granite/granite-3b-code-base-2k',
+                   layers_to_unfreeze=None):
 
     model = AutoModelForCausalLM.from_pretrained('ibm-granite/granite-3b-code-base-2k',
                                                  torch_dtype=torch.bfloat16)
