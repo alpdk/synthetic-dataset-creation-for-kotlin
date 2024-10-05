@@ -81,6 +81,7 @@ def generate_base_model_answers(model_name="JetBrains/CodeLlama-7B-Kexer", datas
         output.append({"task_id": key, "completion": answer, "language": "kotlin"})
 
     output_file = f"answers"
+
     with jsonlines.open(output_file, mode="w") as writer:
         for line in output:
             writer.write(line)
