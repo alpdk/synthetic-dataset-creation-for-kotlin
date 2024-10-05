@@ -3,7 +3,7 @@ import torch
 
 from tqdm import tqdm
 from datasets import load_dataset
-from generate_base_model_answers import StoppingCriteriaSub, clean_answer
+from generate_model_answers import StoppingCriteriaSub, clean_answer
 
 from transformers import (
     AutoTokenizer,
