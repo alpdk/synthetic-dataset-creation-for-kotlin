@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import requests, zipfile, io
 
@@ -48,3 +49,9 @@ def setup_kotlinc(link='https://github.com/JetBrains/kotlin/releases/download/v2
     else:
         os.environ['PATH'] += ":" + path_to_kotlinc
         print(f"The path '{path_to_kotlinc}' ADDED to the PATH.")
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        setup_kotlinc()
+    else:
+        setup_kotlinc(sys.argv[1])

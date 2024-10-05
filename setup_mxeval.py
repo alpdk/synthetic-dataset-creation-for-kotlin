@@ -42,3 +42,9 @@ def setup_mxeval(mxeval_parent_dir='/home/alpdk/gitRepos/synthetic-dataset-creat
             sys.path.remove(mxeval_dir)
 
         sys.path.insert(0, mxeval_dir)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        setup_mxeval()
+    else:
+        setup_mxeval(sys.argv[1])
