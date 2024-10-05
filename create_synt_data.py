@@ -73,36 +73,36 @@ def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-c
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     len_dataset = len(dataset)
-    counter = 0
 
-    for i in tqdm(range(len_dataset)):
+    with tqdm(total=translate_count) as pbar:
+        for i in range(len_dataset):
 
-        if counter >= translate_count:
-            break
+            if pbar.n >= translate_count:
+                break
 
-        code, comment = split_problem_data(dataset[i]["problem"])
+            code, comment = split_problem_data(dataset[i]["problem"])
 
-        sol_code = dataset[i]["solution"]
+            sol_code = dataset[i]["solution"]
 
-        func_head, func_body = generate_kotlin_prompt(model, tokenizer, comment + '\n' + code + '\n' + sol_code,
-                                                      """Complete solution for python code and translate the following Python function to Kotlin.q
-                                                      Ensure the Kotlin function has proper formatting with correct indentation.
-                                                      The Kotlin function definition should include a `{` immediately after the parameter list, and the rest of the code should be indented as per Kotlin's syntax rules.
-                                                      Python code:
+            func_head, func_body = generate_kotlin_prompt(model, tokenizer, comment + '\n' + code + '\n' + sol_code,
+                                                          """Complete solution for python code and translate the following Python function to Kotlin.q
+                                                          Ensure the Kotlin function has proper formatting with correct indentation.
+                                                          The Kotlin function definition should include a `{` immediately after the parameter list, and the rest of the code should be indented as per Kotlin's syntax rules.
+                                                          Python code:
+    
+                                                          ```python""",
+                                                          "\n}\n")
 
-                                                      ```python""",
-                                                      "\n}\n")
+            if func_head == func_body == "":
+                continue
 
-        if func_head == func_body == "":
-            continue
+            new_dataset["train"].append([])
+            new_dataset["train"][-1] = {}
 
-        new_dataset["train"].append([])
-        new_dataset["train"][-1] = {}
+            new_dataset["train"][-1]["prompt"] = comment + "\n\n" + func_head
+            new_dataset["train"][-1]["solution"] = func_body
 
-        new_dataset["train"][-1]["prompt"] = comment + "\n\n" + func_head
-        new_dataset["train"][-1]["solution"] = func_body
-
-        counter += 1
+            pbar.update(1)
 
     with open("test_dataset.json", "w") as outfile:
         json.dump(new_dataset, outfile)
