@@ -3,7 +3,7 @@ import torch
 
 from tqdm import tqdm
 from datasets import load_dataset
-from generate_model_answers import StoppingCriteriaSub, clean_answer
+from generate_model_answers import clean_answer, StoppingCriteriaSub
 
 from transformers import (
     AutoTokenizer,
@@ -41,11 +41,11 @@ def generate_kotlin_prompt(model, tokenizer, code, prompt, stop_crit):
 
     sample = model.generate(
         problem,
-        max_new_tokens=256,
-        min_new_tokens=128,
+        max_new_tokens=512,
+        min_new_tokens=256,
         pad_token_id=tokenizer.eos_token_id,
         do_sample=False,
-        num_beams=5,
+        num_beams=4,
         stopping_criteria=stopping_criteria,
     )
 
@@ -53,6 +53,9 @@ def generate_kotlin_prompt(model, tokenizer, code, prompt, stop_crit):
 
     code = clean_answer(answer, 0)
     substring = " {"
+
+    if "fun " not in code:
+        return "", ""
 
     func_head, func_body = code.split(substring, 1)
 
@@ -69,30 +72,35 @@ def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-c
     model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16).to('cuda')
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    for i in tqdm(range(translate_count)):
+    len_dataset = len(dataset)
+    counter = 0
+
+    for i in tqdm(range(len_dataset)):
+
+        if counter >= translate_count:
+            break
+
         code, comment = split_problem_data(dataset[i]["problem"])
 
         sol_code = dataset[i]["solution"]
 
         func_head, func_body = generate_kotlin_prompt(model, tokenizer, comment + '\n' + code + '\n' + sol_code,
-                                                      """Generate and translate the following Python function to Kotlin. 
-                                                      Ensure the Kotlin function has proper formatting with correct indentation. 
+                                                      """Complete solution for python code and translate the following Python function to Kotlin.q
+                                                      Ensure the Kotlin function has proper formatting with correct indentation.
                                                       The Kotlin function definition should include a `{` immediately after the parameter list, and the rest of the code should be indented as per Kotlin's syntax rules.
                                                       Python code:
 
                                                       ```python""",
                                                       "\n}\n")
 
-        new_dataset["train"].append([])
-        new_dataset["train"][i] = {}
+        if func_head == func_body == "":
+            continue
 
-        new_dataset["train"][i]["input_text"] = comment + "\n\n" + func_head
-        new_dataset["train"][i]["target_text"] = func_body
+        new_dataset["train"].append([])
+        new_dataset["train"][-1] = {}
+
+        new_dataset["train"][-1]["prompt"] = comment + "\n\n" + func_head
+        new_dataset["train"][-1]["solution"] = func_body
 
     with open("test_dataset.json", "w") as outfile:
         json.dump(new_dataset, outfile)
-        # print(new_dataset["train"][-1]["prompt"], end='\n\n')
-        # print(new_dataset["train"][-1]["solution"], end='\n\n')
-
-
-create_synt_data()
