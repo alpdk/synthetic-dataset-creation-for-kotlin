@@ -33,6 +33,7 @@ def generate(problem, model, tokenizer):
     stopping_criteria = StoppingCriteriaList([criterion])
 
     problem = tokenizer.encode(problem, return_tensors="pt").to('cuda')
+
     sample = model.generate(
         problem,
         max_new_tokens=256,
