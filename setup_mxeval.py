@@ -44,7 +44,9 @@ def setup_mxeval(mxeval_parent_dir=os.path.dirname(os.path.realpath(__file__))):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
+    if len(sys.argv) == 1:
         setup_mxeval()
-    else:
+    elif len(sys.argv) == 2:
         setup_mxeval(sys.argv[1])
+    else:
+        print("Wrong number of arguments")

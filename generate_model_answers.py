@@ -1,4 +1,5 @@
 import re
+import sys
 import torch
 import jsonlines
 
@@ -87,3 +88,13 @@ def generate_model_answers(model_name="ibm-granite/granite-3b-code-base-2k",
     with jsonlines.open(output_file, mode="w") as writer:
         for line in output:
             writer.write(line)
+
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        generate_model_answers()
+    elif len(sys.argv) == 2:
+        generate_model_answers(sys.argv[1])
+    elif len(sys.argv) == 3:
+        generate_model_answers(sys.argv[1], sys.argv[2])
+    else:
+        print("Wrong number of arguments")

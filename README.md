@@ -42,6 +42,24 @@ You can run this scrypt like:
 1. ```python setup_mxeval.py```
 2. ```python setup_mxeval.py [path]```
 
+## Test not fine tuned llm model
+
+Before we will start fine tuning llm we need to check what pass rate it has on our testing dataset.
+For that you ca run script `generate_model_answer.py`
+
+This script has 2 optional parameters:
+
+1. Name of the model or local path to it. (default: `ibm-granite/granite-3b-code-base-2k` )
+2. Dataset for testing. (default: `jetbrains/Kotlin_HumanEval` )
+
+You can run this scrypt like:
+
+1. ```python generate_model_answers.py```
+2. ```python generate_model_answers.py [model name/local path]```
+3. ```python generate_model_answers.py [model name/local path] [dataset name]```
+
+
+
 
 
 

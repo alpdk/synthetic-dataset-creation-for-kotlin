@@ -49,7 +49,9 @@ def setup_kotlinc(link='https://github.com/JetBrains/kotlin/releases/download/v2
         print(f"The path '{path_to_kotlinc}' ADDED to the PATH.")
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
+    if len(sys.argv) == 1:
         setup_kotlinc()
-    else:
+    elif len(sys.argv) == 2:
         setup_kotlinc(sys.argv[1])
+    else:
+        print("Wrong number of arguments")
