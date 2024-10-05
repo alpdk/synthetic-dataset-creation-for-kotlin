@@ -66,7 +66,9 @@ def clean_answer(code, skip_lines=1):
     return code
 
 
-def generate_model_answers(model_name="ibm-granite/granite-3b-code-base-2k", dataset_name="jetbrains/Kotlin_HumanEval"):
+def generate_model_answers(model_name="ibm-granite/granite-3b-code-base-2k",
+                           dataset_name="jetbrains/Kotlin_HumanEval"):
+    
     dataset = load_dataset(dataset_name)['train']
     problem_dict = {problem['task_id']: problem for problem in dataset}
 
