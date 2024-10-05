@@ -3,8 +3,6 @@ import sys
 import shutil
 import requests, zipfile, io
 
-from get_cur_dir import get_cur_dir
-
 
 # Install zip archive and unpack it
 def install_arc_and_unpack(link, cur_dir):
@@ -35,7 +33,7 @@ def install_kotlinc(link, cur_dir, kotlinc_dir):
 
 
 def setup_kotlinc(link='https://github.com/JetBrains/kotlin/releases/download/v2.0.20/kotlin-compiler-2.0.20.zip'):
-    cur_dir = get_cur_dir()
+    cur_dir = os.path.dirname(os.path.realpath(__file__))
     kotlinc_dir = os.path.join(cur_dir, "kotlinc")
 
     install_kotlinc(link, cur_dir, kotlinc_dir)

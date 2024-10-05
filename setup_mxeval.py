@@ -3,12 +3,11 @@ import sys
 import shutil
 
 from git import Repo
-from get_cur_dir import get_cur_dir
 
 
 # Install mxeval by link
 def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
-    cur_dir = get_cur_dir()
+    cur_dir = os.path.dirname(os.path.realpath(__file__))
     mxeval_dir = os.path.join(cur_dir, "mxeval")
 
     # Check dir for existence
@@ -31,7 +30,7 @@ def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
 
 
 # Add mxeval_dir to sys.path for usages
-def setup_mxeval(mxeval_parent_dir='/home/alpdk/gitRepos/synthetic-dataset-creation-for-kotlin/'):
+def setup_mxeval(mxeval_parent_dir=os.path.dirname(os.path.realpath(__file__))):
     # Get the path to the mxeval directory
     mxeval_dir = os.path.join(mxeval_parent_dir, 'mxeval')
 
@@ -42,6 +41,7 @@ def setup_mxeval(mxeval_parent_dir='/home/alpdk/gitRepos/synthetic-dataset-creat
             sys.path.remove(mxeval_dir)
 
         sys.path.insert(0, mxeval_dir)
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
