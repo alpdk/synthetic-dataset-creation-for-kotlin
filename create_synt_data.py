@@ -102,5 +102,7 @@ def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-c
         new_dataset["train"][-1]["prompt"] = comment + "\n\n" + func_head
         new_dataset["train"][-1]["solution"] = func_body
 
+        counter += 1
+
     with open("test_dataset.json", "w") as outfile:
         json.dump(new_dataset, outfile)
