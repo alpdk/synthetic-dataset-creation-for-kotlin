@@ -1,3 +1,4 @@
+import sys
 import json
 
 from datasets import load_dataset
@@ -31,3 +32,11 @@ def check_kotlin_code(file_to_check = 'answers'):
             correct += sample_res['passed']
 
         print(f'Pass rate: {correct/total}')
+
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        check_kotlin_code()
+    elif len(sys.argv) == 2:
+        check_kotlin_code(sys.argv[1])
+    else:
+        print("Wrong number of arguments")

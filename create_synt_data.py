@@ -121,3 +121,5 @@ if __name__ == '__main__':
         create_synt_data(sys.argv[1], sys.argv[2])
     elif len(sys.argv) == 4:
         create_synt_data(sys.argv[1], sys.argv[2], sys.argv[3])
+    else:
+        print("Wrong number of arguments")
