@@ -1,3 +1,5 @@
+import sys
+
 import json
 import torch
 
@@ -109,3 +111,13 @@ def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-c
 
     del model
     torch.cuda.empty_cache()
+
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        create_synt_data()
+    elif len(sys.argv) == 2:
+        create_synt_data(sys.argv[1])
+    elif len(sys.argv) == 3:
+        create_synt_data(sys.argv[1], sys.argv[2])
+    elif len(sys.argv) == 4:
+        create_synt_data(sys.argv[1], sys.argv[2], sys.argv[3])
