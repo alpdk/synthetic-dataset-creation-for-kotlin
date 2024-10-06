@@ -12,7 +12,7 @@ For proper work this code will require from user packages:
 
 For their installation we will run this line in terminal:
 
-```pip install datasets jsonlines peft > /dev/null```
+```pip install requirements.txt```
 
 ### Kotlinc
 
