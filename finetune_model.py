@@ -49,8 +49,6 @@ def get_datasets(tokenizer, finetune_dataset_name):
                             max_length=512,
                             return_tensors="pt")
 
-        print(targets)
-
         # The model expects input_ids for inputs and labels for target outputs
         inputs['labels'] = targets['input_ids']
 
