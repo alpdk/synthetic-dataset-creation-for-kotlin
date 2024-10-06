@@ -89,7 +89,7 @@ def finetune_model(model_name='ibm-granite/granite-3b-code-base-2k',
     config = LoraConfig(
         r=16,
         lora_alpha=16,
-        target_modules=["q_proj", "k_proj", "v_proj"],
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
         lora_dropout=0.05,
     )
 
