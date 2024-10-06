@@ -106,3 +106,6 @@ def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-c
 
     with open("test_dataset.json", "w") as outfile:
         json.dump(new_dataset, outfile)
+
+    del model
+    torch.cuda.empty_cache()

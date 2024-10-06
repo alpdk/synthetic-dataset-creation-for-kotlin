@@ -141,3 +141,6 @@ def finetune_model(check_dataset_name='jinaai/code_exercises',
     tokenizer.save_pretrained("./finetuned_model")
 
     print("Model fine-tuned and saved successfully.")
+
+    del model
+    torch.cuda.empty_cache()

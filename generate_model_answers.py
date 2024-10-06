@@ -89,6 +89,9 @@ def generate_model_answers(model_name="ibm-granite/granite-3b-code-base-2k",
         for line in output:
             writer.write(line)
 
+    del model
+    torch.cuda.empty_cache()
+
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         generate_model_answers()
