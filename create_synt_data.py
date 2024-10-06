@@ -14,7 +14,7 @@ from transformers import (
     StoppingCriteriaList,
 )
 
-
+# Split python input into comment and code
 def split_problem_data(problem_str):
     start_index = problem_str.find('"""')
     end_index = problem_str.find('"""', start_index + 3)
@@ -29,6 +29,7 @@ def split_problem_data(problem_str):
         raise ValueError("Comment section not found.")
 
 
+# Generate answer from prompt and code
 def generate_kotlin_prompt(model, tokenizer, code, prompt, stop_crit):
     criterion = StoppingCriteriaSub(stops=stop_crit, tokenizer=tokenizer)
     stopping_criteria = StoppingCriteriaList([criterion])
@@ -52,6 +53,7 @@ def generate_kotlin_prompt(model, tokenizer, code, prompt, stop_crit):
     code = clean_answer(answer, 0)
     substring = " {"
 
+    # Checking that function was generated
     if "fun " not in code:
         return "", ""
 
@@ -62,6 +64,7 @@ def generate_kotlin_prompt(model, tokenizer, code, prompt, stop_crit):
     return func_head, func_body
 
 
+# Generate kotlin dataset from python
 def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-code-base-2k', dataset_name="jinaai/code_exercises"):
     new_dataset = {"train": []}
 
@@ -78,10 +81,13 @@ def create_synt_data(translate_count = 100, model_name='ibm-granite/granite-3b-c
             if pbar.n >= translate_count:
                 break
 
+            # getting code and comments
             code, comment = split_problem_data(dataset[i]["problem"])
 
+            # taking python solution
             sol_code = dataset[i]["solution"]
 
+            # generate kotlin test from python
             func_head, func_body = generate_kotlin_prompt(model, tokenizer, comment + '\n' + code + '\n' + sol_code,
                                                           """Complete solution for python code and translate the following Python function to Kotlin.q
                                                           Ensure the Kotlin function has proper formatting with correct indentation.

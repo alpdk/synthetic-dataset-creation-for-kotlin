@@ -8,6 +8,7 @@ setup_mxeval()
 
 from mxeval.evaluation import evaluate_functional_correctness
 
+# Run model on test dataset and print pass rate
 def check_kotlin_code(file_to_check = 'answers'):
     dataset = load_dataset("jetbrains/Kotlin_HumanEval")['train']
     problem_dict = {problem['task_id']: problem for problem in dataset}

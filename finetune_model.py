@@ -17,7 +17,7 @@ from transformers import (
     DataCollatorForLanguageModeling
 )
 
-
+# Read dataset
 def get_datasets(tokenizer, finetune_dataset_name):
     try:
         with open(finetune_dataset_name, 'r') as f:
@@ -60,12 +60,14 @@ def get_datasets(tokenizer, finetune_dataset_name):
     return tokenized_train_dataset, tokenized_test_dataset
 
 
+# Fine tuning model with save in the end
 def finetune_model(model_name='ibm-granite/granite-3b-code-base-2k',
                    finetune_dataset_name='test_dataset.json'):
     model = AutoModelForCausalLM.from_pretrained(model_name,
                                                  torch_dtype=torch.bfloat16)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
+    # freezing model layers
     for param in model.parameters():
         param.requires_grad = False
 
@@ -80,6 +82,7 @@ def finetune_model(model_name='ibm-granite/granite-3b-code-base-2k',
 
     model.lm_head = CastOutputToFloat(model.lm_head)
 
+    # Set up layers for finetuning
     config = LoraConfig(
         r=16,
         lora_alpha=16,

@@ -13,7 +13,7 @@ from transformers import (
     StoppingCriteriaList,
 )
 
-
+# Criteria for stopping code generation
 class StoppingCriteriaSub(StoppingCriteria):
     def __init__(self, stops, tokenizer):
         (StoppingCriteria.__init__(self),)
@@ -29,6 +29,7 @@ class StoppingCriteriaSub(StoppingCriteria):
         return bool(re.search(self.stops, decoded_last_three_tokens))
 
 
+# Generate model answer
 def generate(problem, model, tokenizer):
     criterion = StoppingCriteriaSub(stops="\n}\n", tokenizer=tokenizer)
     stopping_criteria = StoppingCriteriaList([criterion])
@@ -48,7 +49,7 @@ def generate(problem, model, tokenizer):
     answer = tokenizer.decode(sample[0], skip_special_tokens=True)
     return answer
 
-
+# Clean answer from comments and head of the function
 def clean_answer(code, skip_lines=1):
     code_without_line_comments = re.sub(r"//.*", "", code)
 
@@ -65,6 +66,7 @@ def clean_answer(code, skip_lines=1):
     return code
 
 
+# Generate answers for testing model
 def generate_model_answers(model_name="ibm-granite/granite-3b-code-base-2k",
                            dataset_name="jetbrains/Kotlin_HumanEval"):
 
