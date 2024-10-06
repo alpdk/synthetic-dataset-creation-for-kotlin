@@ -120,7 +120,7 @@ but as input parameter give `./finetuned_model` as model:
 
 ## Code for default run
 
-This code will run default fine tuning solution.
+This code will run default fine tuning solution locally. Require 12GB GPU at least. 
 
 ```angular2html
 pip install requiremnets.txt > /dev/null
@@ -131,6 +131,20 @@ python create_synt_data.py
 python finetune_model.py
 python generate_model_answers.py ./finetuned_model
 ```
+
+Otherwise it is possible to run part with models through google colab. 
+Should be run on T4 at least.
+
+Google colab part:
+
+1. Run all cells in 'Environment setup' section
+2. Run cells inside of 'Generate base model answers' and save file for testing.
+3. Run all next cells and save last result for test.
+
+Local part:
+
+1. Run scrypt `python generate_model_answers.py` with first saved file
+2. Run scrypt `python generate_model_answers.py` with second saved file
 
 ## Results
 
