@@ -29,10 +29,8 @@ def get_datasets(tokenizer, finetune_dataset_name):
     train_data = dataset['train']
     train_dataset = Dataset.from_list(train_data)
 
-    # Split the dataset into train and test (e.g., 80% train, 20% test)
     train_test_split = train_dataset.train_test_split(test_size=0.2)
 
-    # The result is now a dataset dictionary with 'train' and 'test' splits
     train_dataset = train_test_split['train']
     test_dataset = train_test_split['test']
 
@@ -49,7 +47,6 @@ def get_datasets(tokenizer, finetune_dataset_name):
                             max_length=512,
                             return_tensors="pt")
 
-        # The model expects input_ids for inputs and labels for target outputs
         inputs['labels'] = targets['input_ids']
 
         return inputs
@@ -83,7 +80,6 @@ def finetune_model(model_name='ibm-granite/granite-3b-code-base-2k',
 
     model.lm_head = CastOutputToFloat(model.lm_head)
 
-    # Setting LoraConfig for phi-1_5
     config = LoraConfig(
         r=16,
         lora_alpha=16,
@@ -99,19 +95,17 @@ def finetune_model(model_name='ibm-granite/granite-3b-code-base-2k',
     if tokenized_train_dataset is None and tokenized_test_dataset is None:
         return None
 
-    # Define training arguments
     training_args = TrainingArguments(
         output_dir="./results",
-        per_device_train_batch_size=8,  # Default value
-        per_device_eval_batch_size=8,  # Default value
+        per_device_train_batch_size=8,
+        per_device_eval_batch_size=8,
         num_train_epochs=30,
         logging_dir="./logs",
         logging_steps=10,
-        # save_steps=2,
         evaluation_strategy="epoch",
         learning_rate=1e-4,
         remove_unused_columns=False,
-        fp16=True,  # Enable mixed precision training
+        fp16=True,
     )
 
     # Define the Trainer
@@ -121,21 +115,16 @@ def finetune_model(model_name='ibm-granite/granite-3b-code-base-2k',
         train_dataset=tokenized_train_dataset,
         eval_dataset=tokenized_test_dataset,
         data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False)
-        # Optionally define a custom compute_loss function if necessary
     )
 
-    # Fine-tune the model
     print("Starting fine-tuning...")
     trainer.train()
 
-    # Evaluate the model
     print("Evaluating the model...")
     evaluation_results = trainer.evaluate()
 
-    # Print evaluation results
     print("Evaluation results:", evaluation_results)
 
-    # Save the fine-tuned model
     model.save_pretrained("./finetuned_model")
     tokenizer.save_pretrained("./finetuned_model")
 

@@ -4,16 +4,13 @@ import shutil
 import requests, zipfile, io
 
 
-# Install zip archive and unpack it
 def install_arc_and_unpack(link, cur_dir):
     r = requests.get(link)
     z = zipfile.ZipFile(io.BytesIO(r.content))
     z.extractall(cur_dir)
 
 
-# Install kotlinc by link with checks
 def install_kotlinc(link, cur_dir, kotlinc_dir):
-    # Checking kotlinc existence
     if os.path.exists(kotlinc_dir):
         command = input("Kotlinc does exist. Do you want to update it?(y/N):")
 

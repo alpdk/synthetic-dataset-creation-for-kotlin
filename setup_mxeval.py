@@ -5,12 +5,10 @@ import shutil
 from git import Repo
 
 
-# Install mxeval by link
 def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     mxeval_dir = os.path.join(cur_dir, "mxeval")
 
-    # Check dir for existence
     if os.path.isdir(mxeval_dir):
         command = input("Directory does exist. Do you want to update it?(y/N):")
 
@@ -29,12 +27,9 @@ def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
         Repo.clone_from(link, mxeval_dir)
 
 
-# Add mxeval_dir to sys.path for usages
 def setup_mxeval(mxeval_parent_dir=os.path.dirname(os.path.realpath(__file__))):
-    # Get the path to the mxeval directory
     mxeval_dir = os.path.join(mxeval_parent_dir, 'mxeval')
 
-    # Add mxeval to sys.path
     if sys.path[0] != mxeval_dir:
 
         if mxeval_dir in sys.path:

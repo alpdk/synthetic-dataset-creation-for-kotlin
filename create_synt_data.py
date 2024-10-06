@@ -16,16 +16,12 @@ from transformers import (
 
 
 def split_problem_data(problem_str):
-    # Find the position of the opening and closing triple quotes
     start_index = problem_str.find('"""')
     end_index = problem_str.find('"""', start_index + 3)
 
-    # Check if both quotes were found
     if start_index != -1 and end_index != -1:
-        # Extract the code part (up to the start of the comment)
         code = problem_str[:start_index].strip()
 
-        # Extract the comment part (between the triple quotes)
         comment = "/***" + problem_str[start_index + 3:end_index].strip() + "***/\n"
 
         return code, comment
