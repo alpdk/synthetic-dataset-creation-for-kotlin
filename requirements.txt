@@ -1,4 +1,4 @@
 datasets
 jsonlines
 peft
-git
+gitpython
