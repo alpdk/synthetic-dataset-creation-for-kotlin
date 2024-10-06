@@ -1,3 +1,5 @@
+import sys
+
 import json
 import torch
 import torch.nn as nn
@@ -15,9 +17,10 @@ from transformers import (
     DataCollatorForLanguageModeling
 )
 
-def get_datasets(tokenizer):
+
+def get_datasets(tokenizer, finetune_dataset_name):
     try:
-        with open('test_dataset.json', 'r') as f:
+        with open(finetune_dataset_name, 'r') as f:
             dataset = json.load(f)
     except FileNotFoundError as e:
         print(f"The file {e} was not found.")
@@ -61,26 +64,24 @@ def get_datasets(tokenizer):
 
     return tokenized_train_dataset, tokenized_test_dataset
 
-def finetune_model(check_dataset_name='jinaai/code_exercises',
-                   finetune_dataset_name='test_dataset.json',
-                   model_name='ibm-granite/granite-3b-code-base-2k',
-                   layers_to_unfreeze=None):
 
-    model = AutoModelForCausalLM.from_pretrained('ibm-granite/granite-3b-code-base-2k',
+def finetune_model(model_name='ibm-granite/granite-3b-code-base-2k',
+                   finetune_dataset_name='test_dataset.json'):
+    model = AutoModelForCausalLM.from_pretrained(model_name,
                                                  torch_dtype=torch.bfloat16)
-    tokenizer = AutoTokenizer.from_pretrained('ibm-granite/granite-3b-code-base-2k')
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     for param in model.parameters():
         param.requires_grad = False
 
         if param.ndim == 1:
-            param.data = param.data.to(torch.float32)
+            param.data = param.data.to(torch.bfloat16)
 
     model.gradient_checkpointing_enable()
     model.enable_input_require_grads()
 
     class CastOutputToFloat(nn.Sequential):
-        def forward(self, x): return super().forward(x).to(torch.float32)
+        def forward(self, x): return super().forward(x).to(torch.bfloat16)
 
     model.lm_head = CastOutputToFloat(model.lm_head)
 
@@ -95,7 +96,7 @@ def finetune_model(check_dataset_name='jinaai/code_exercises',
     model = get_peft_model(model, config)
     model.print_trainable_parameters()
 
-    tokenized_train_dataset, tokenized_test_dataset = get_datasets(tokenizer)
+    tokenized_train_dataset, tokenized_test_dataset = get_datasets(tokenizer, finetune_dataset_name)
 
     if tokenized_train_dataset is None and tokenized_test_dataset is None:
         return None
@@ -144,3 +145,16 @@ def finetune_model(check_dataset_name='jinaai/code_exercises',
 
     del model
     torch.cuda.empty_cache()
+
+    del model
+    torch.cuda.empty_cache()
+
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        finetune_model()
+    elif len(sys.argv) == 2:
+        finetune_model(sys.argv[1])
+    elif len(sys.argv) == 3:
+        finetune_model(sys.argv[1], sys.argv[2])
+    else:
+        print("Wrong number of arguments")
