@@ -104,11 +104,11 @@ def finetune_model(model_name='ibm-granite/granite-3b-code-base-2k',
         output_dir="./results",
         per_device_train_batch_size=8,  # Default value
         per_device_eval_batch_size=8,  # Default value
-        num_train_epochs=1,
+        num_train_epochs=30,
         logging_dir="./logs",
         logging_steps=10,
         # save_steps=2,
-        max_steps=300,
+        evaluation_strategy="epoch",
         learning_rate=1e-4,
         remove_unused_columns=False,
         fp16=True,  # Enable mixed precision training
@@ -140,9 +140,6 @@ def finetune_model(model_name='ibm-granite/granite-3b-code-base-2k',
     tokenizer.save_pretrained("./finetuned_model")
 
     print("Model fine-tuned and saved successfully.")
-
-    del model
-    torch.cuda.empty_cache()
 
     del model
     torch.cuda.empty_cache()
