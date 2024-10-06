@@ -132,3 +132,27 @@ python finetune_model.py
 python generate_model_answers.py ./finetuned_model
 ```
 
+## Results
+
+Pass rate for original model is 0.07.
+
+Fine tuned with 300 steps, 100 dataset size, and 
+fine tuned layers `[q_proj, k_proj, v_proj, o_proj]` gave same pass rates 0.14.
+
+Fine tuned with 300 steps, 5/100 dataset size, and 
+fine tuned layers `[q_proj, k_proj, v_proj]` gave same pass rates 0.18.
+
+Some test was not solved because of syntax mistakes, it can be solved  
+
+For petter performance can be change:
+
+1. Dataset size:
+   Dataset contain small count of tasks of different level, 
+   as a result it learn how to do specific task and do not spread its knowledge.
+2. Dataset quality and better prompt:
+   Quality of dataset very sensitive to prompt and require some checks after generations.
+3. Better parameters of fine tuning
+   Some features could not to learn because of small count of fine tuning steps,
+   more layer could be train (q_proj, k_proj, v_proj and o_proj contains only 30% 
+   of model parameters) and others.
+
