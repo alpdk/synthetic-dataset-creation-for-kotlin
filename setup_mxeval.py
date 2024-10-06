@@ -30,12 +30,14 @@ def install_mxeval(link='https://github.com/amazon-science/mxeval.git'):
 def setup_mxeval(mxeval_parent_dir=os.path.dirname(os.path.realpath(__file__))):
     mxeval_dir = os.path.join(mxeval_parent_dir, 'mxeval')
 
-    if sys.path[0] != mxeval_dir:
+    if os.path.isdir(mxeval_dir):
 
         if mxeval_dir in sys.path:
             sys.path.remove(mxeval_dir)
 
         sys.path.insert(0, mxeval_dir)
+    else:
+        install_mxeval()
 
 
 if __name__ == '__main__':
