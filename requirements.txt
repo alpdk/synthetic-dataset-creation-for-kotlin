@@ -1,4 +1,7 @@
-datasets
-jsonlines
-peft
-gitpython
+torch>=1.9.0
+transformers>=4.0.0
+datasets>=2.0.0
+peft>=0.0.1
+tqdm>=4.0.0
+jsonlines>=2.0.0
+gitpython>=3.0.0
