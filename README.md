@@ -141,7 +141,7 @@ Google colab part:
 2. Run cells inside 'Generate base model answers' and save file for testing.
 3. Run all next cells and save last result for test.
 
-Local part:
+Local part for seeing fine-tuning results:
 
 1. Run script `python check_kotlin_code.py` with first saved file
 2. Run script `python check_kotlin_code.py` with second saved file
