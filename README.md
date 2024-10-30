@@ -143,8 +143,8 @@ Google colab part:
 
 Local part:
 
-1. Run script `python generate_model_answers.py` with first saved file
-2. Run script `python generate_model_answers.py` with second saved file
+1. Run script `python check_kotlin_code.py` with first saved file
+2. Run script `python check_kotlin_code.py` with second saved file
 
 ## Results
 
