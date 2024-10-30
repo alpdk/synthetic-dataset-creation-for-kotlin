@@ -153,7 +153,7 @@ Pass rate for original model is 0.07.
 Fine-tuned with 25 epochs, 100 dataset size, and
 fine-tuned layers `[q_proj, k_proj, v_proj, o_proj]` gave same pass rates 0.14.
 
-Fine-tuned with 25 epochs, 5/100 dataset size, and
+Fine-tuned with 25 epochs, 100 dataset size, and
 fine-tuned layers `[q_proj, k_proj, v_proj]` gave same pass rates 0.18.
 
 Fine-tuned with 30 epochs, 200 dataset size, and
